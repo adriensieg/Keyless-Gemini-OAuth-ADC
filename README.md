@@ -1,6 +1,10 @@
 # Keyless-Gemini-OAuth-ADC
 Cloud Run securely calls the Gemini API by using its service account identity to obtain short-lived OAuth 2.0 access tokens from the metadata server, eliminating the need for exposed API keys.
 
+<img width="896" height="530" alt="image" src="https://github.com/user-attachments/assets/dcf0e7d6-da67-4a00-9644-f02556c5c27f" />
+
+Architecture explanation - https://adriensieg.substack.com/p/no-more-api-keys-secure-gemini-calls
+
 ## Layout of the project
 
 ```
