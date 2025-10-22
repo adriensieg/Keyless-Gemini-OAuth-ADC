@@ -110,7 +110,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 
 ```
 git init
-git remote add origin https://github.com/enterprise-data-analytics-ai-org/dqdm-auth-ailab-authz.git
+git remote add origin https://github.com/adriensieg/Keyless-Gemini-OAuth-ADC.git
 git fetch origin
 git checkout -b gemini-sa-sts-private
 git add .
