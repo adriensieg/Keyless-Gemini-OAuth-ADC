@@ -1,0 +1,44 @@
+# cloudbuild.yaml
+substitutions:
+  _PROJECT_ID: "genai-poc-uc1-gcp"
+  _IMAGE_NAME: "my-cloudrun-app"
+  _REPO_NAME: "aaa-query-gemini-securely"
+  _REGION: "us-central1"
+  _SERVICE_NAME: "cloudrun-app-sa"
+  _RUNTIME_SA: "cloudrun-app-sa@${_PROJECT_ID}.iam.gserviceaccount.com"
+
+steps:
+# 1) Build the image
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - build
+  - '-t'
+  - '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/${_IMAGE_NAME}:$SHORT_SHA'
+  - '.'
+
+# 2) Push image to Artifact Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - push
+  - '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/${_IMAGE_NAME}:$SHORT_SHA'
+
+# 3) Deploy to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    set -e
+    IMAGE="${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/${_IMAGE_NAME}:$SHORT_SHA"
+    gcloud run deploy "${_SERVICE_NAME}" \
+      --image="$$IMAGE" \
+      --region="${_REGION}" \
+      --platform=managed \
+      --allow-unauthenticated \
+      --service-account="${_RUNTIME_SA}" \
+      --quiet
+
+images:
+- '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_REPO_NAME}/${_IMAGE_NAME}:$SHORT_SHA'
+
+timeout: '900s'
